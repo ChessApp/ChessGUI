@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Button, Text, View, TextInput } from 'react-native';
+import { StyleSheet, Button, Text, View, TextInput, Keyboard, TouchableWithoutFeedback } from 'react-native';
 
 import Square from './components/Square'
 
@@ -30,118 +30,123 @@ export default function App() {
     // xmlhttp.open("GET", "http://localhost:8080/GameState.xml", true);
     var inputBase = "input=";
     xmlhttp.send(inputBase.concat(enteredInput));
+    Keyboard.dismiss();
   }
 
   return (
-    <View style={{flexDirection: 'column', flex: 64}}>
-      <View style={styles.header}>
-        <Text style={{padding: 75, color: 'black', fontSize: 20, alignItems: 'center', justifyContent: 'center'}}>The Ol' War Game</Text>
+    <TouchableWithoutFeedback onPress={() => {
+      Keyboard.dismiss();
+    }}>
+      <View style={{flexDirection: 'column', flex: 64}}>
+        <View style={styles.header}>
+          <Text style={{padding: 75, color: 'black', fontSize: 20, alignItems: 'center', justifyContent: 'center'}}>The Ol' War Game</Text>
+        </View>
+        <View style={styles.header}>
+          <TextInput
+            style={{height: 40, width: 350, borderColor: 'gray', borderWidth: 1}}
+            onChangeText={urlHandler}
+            value={enteredURL}
+            placeholder={'can copy-paste'}
+          />
+        </View>
+        <View style={{flexDirection: 'row'}}>
+          <Button
+            onPress={loadXML}
+            title='GET'
+          />
+          <Button
+            onPress={sendInput}
+            title='POST'
+          />
+          <TextInput
+            style={{height: 40, width: 60, borderColor: 'gray', borderWidth: 1}}
+            onChangeText={inputHandler}
+            value={enteredInput}
+          />
+        </View>
+        <View style={styles.screen}>
+          <Square title="R" style={styles.square} />
+          <Square title="KN" />
+          <Square title="B" style={styles.square} />
+          <Square title="Q" />
+          <Square title="K" style={styles.square} />
+          <Square title="B" />
+          <Square title="KN" style={styles.square} />
+          <Square title="R" />
+        </View>
+        <View style={styles.screen}>
+          <Square title="P" />
+          <Square title="P" style={styles.square} />
+          <Square title="P" />
+          <Square title="P" style={styles.square} />
+          <Square title="P" />
+          <Square title="P" style={styles.square} />
+          <Square title="P" />
+          <Square title="P" style={styles.square} />
+        </View>
+        <View style={styles.screen}>
+          <Square title="" style={styles.square} />
+          <Square title="" />
+          <Square title="" style={styles.square} />
+          <Square title="" />
+          <Square title="" style={styles.square} />
+          <Square title="" />
+          <Square title="" style={styles.square} />
+          <Square title="" />
+        </View>
+        <View style={styles.screen}>
+          <Square title="" />
+          <Square title="" style={styles.square} />
+          <Square title="" />
+          <Square title="" style={styles.square} />
+          <Square title="" />
+          <Square title="" style={styles.square} />
+          <Square title="" />
+          <Square title="" style={styles.square} />
+        </View>
+        <View style={styles.screen}>
+          <Square title="" style={styles.square} />
+          <Square title="" />
+          <Square title="" style={styles.square} />
+          <Square title="" />
+          <Square title="" style={styles.square} />
+          <Square title="" />
+          <Square title="" style={styles.square} />
+          <Square title="" />
+        </View>
+        <View style={styles.screen}>
+          <Square title="" />
+          <Square title="" style={styles.square} />
+          <Square title="" />
+          <Square title="" style={styles.square} />
+          <Square title="" />
+          <Square title="" style={styles.square} />
+          <Square title="" />
+          <Square title="" style={styles.square} />
+        </View>
+        <View style={styles.screen}>
+          <Square title="P" style={styles.square} color={styles.name} />
+          <Square title="P" color={styles.name} />
+          <Square title="P" style={styles.square} color={styles.name} />
+          <Square title="P" color={styles.name} />
+          <Square title="P" style={styles.square} color={styles.name} />
+          <Square title="P" color={styles.name} />
+          <Square title="P" style={styles.square} color={styles.name} />
+          <Square title="P" color={styles.name} />
+        </View>
+        <View style={styles.screen}>
+          <Square title="R" color={styles.name} />
+          <Square title="KN" style={styles.square} color={styles.name} />
+          <Square title="B" color={styles.name} />
+          <Square title="Q" style={styles.square} color={styles.name} />
+          <Square title="K" color={styles.name} />
+          <Square title="B" style={styles.square} color={styles.name} />
+          <Square title="KN" color={styles.name} />
+          <Square title="R" style={styles.square} color={styles.name} />
+        </View>
+        <View style={styles.header}/>
       </View>
-      <View style={styles.header}>
-        <TextInput
-          style={{height: 40, width: 350, borderColor: 'gray', borderWidth: 1}}
-          onChangeText={urlHandler}
-          value={enteredURL}
-          placeholder={'can copy-paste'}
-        />
-      </View>
-      <View style={{flexDirection: 'row'}}>
-        <Button
-          onPress={loadXML}
-          title='GET'
-        />
-        <Button
-          onPress={sendInput}
-          title='POST'
-        />
-        <TextInput
-          style={{height: 40, width: 60, borderColor: 'gray', borderWidth: 1}}
-          onChangeText={inputHandler}
-          value={enteredInput}
-        />
-      </View>
-      <View style={styles.screen}>
-        <Square title="R" style={styles.square} />
-        <Square title="KN" />
-        <Square title="B" style={styles.square} />
-        <Square title="Q" />
-        <Square title="K" style={styles.square} />
-        <Square title="B" />
-        <Square title="KN" style={styles.square} />
-        <Square title="R" />
-      </View>
-      <View style={styles.screen}>
-        <Square title="P" />
-        <Square title="P" style={styles.square} />
-        <Square title="P" />
-        <Square title="P" style={styles.square} />
-        <Square title="P" />
-        <Square title="P" style={styles.square} />
-        <Square title="P" />
-        <Square title="P" style={styles.square} />
-      </View>
-      <View style={styles.screen}>
-        <Square title="" style={styles.square} />
-        <Square title="" />
-        <Square title="" style={styles.square} />
-        <Square title="" />
-        <Square title="" style={styles.square} />
-        <Square title="" />
-        <Square title="" style={styles.square} />
-        <Square title="" />
-      </View>
-      <View style={styles.screen}>
-        <Square title="" />
-        <Square title="" style={styles.square} />
-        <Square title="" />
-        <Square title="" style={styles.square} />
-        <Square title="" />
-        <Square title="" style={styles.square} />
-        <Square title="" />
-        <Square title="" style={styles.square} />
-      </View>
-      <View style={styles.screen}>
-        <Square title="" style={styles.square} />
-        <Square title="" />
-        <Square title="" style={styles.square} />
-        <Square title="" />
-        <Square title="" style={styles.square} />
-        <Square title="" />
-        <Square title="" style={styles.square} />
-        <Square title="" />
-      </View>
-      <View style={styles.screen}>
-        <Square title="" />
-        <Square title="" style={styles.square} />
-        <Square title="" />
-        <Square title="" style={styles.square} />
-        <Square title="" />
-        <Square title="" style={styles.square} />
-        <Square title="" />
-        <Square title="" style={styles.square} />
-      </View>
-      <View style={styles.screen}>
-        <Square title="P" style={styles.square} color={styles.name} />
-        <Square title="P" color={styles.name} />
-        <Square title="P" style={styles.square} color={styles.name} />
-        <Square title="P" color={styles.name} />
-        <Square title="P" style={styles.square} color={styles.name} />
-        <Square title="P" color={styles.name} />
-        <Square title="P" style={styles.square} color={styles.name} />
-        <Square title="P" color={styles.name} />
-      </View>
-      <View style={styles.screen}>
-        <Square title="R" color={styles.name} />
-        <Square title="KN" style={styles.square} color={styles.name} />
-        <Square title="B" color={styles.name} />
-        <Square title="Q" style={styles.square} color={styles.name} />
-        <Square title="K" color={styles.name} />
-        <Square title="B" style={styles.square} color={styles.name} />
-        <Square title="KN" color={styles.name} />
-        <Square title="R" style={styles.square} color={styles.name} />
-      </View>
-      <View style={styles.header}/>
-    </View>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -194,7 +199,7 @@ var updateBoard = (xml) => {
 
 const styles = StyleSheet.create({
   header: {
-    paddingTop: 30,
+    paddingTop: 15,
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center'
