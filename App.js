@@ -1,13 +1,49 @@
-import React from 'react';
-import { StyleSheet, Button, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, Button, Text, View, TextInput } from 'react-native';
 
 import Square from './components/Square'
 
 export default function App() {
+  const [enteredInput, setEnteredInput] = useState('');
+  const inputHandler = inputText => {
+    setEnteredInput(inputText);
+  }
+
+  const [enteredURL, setEnteredURL] = useState('');
+  const urlHandler = inputURL => {
+    setEnteredURL(inputURL);
+  }
+
+  const sendInput = () => {
+    console.log("sendInput");
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function() {
+      if(this.readyState == 4 && this.status == 200) {
+        console.log("success");
+        console.log(xmlhttp);
+        return this;
+      }
+    };
+    console.log(enteredURL.concat("/index.php"));
+    xmlhttp.open("POST", enteredURL.concat("/index.php"), true);
+    // xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    // xmlhttp.open("GET", "http://localhost:8080/GameState.xml", true);
+    var inputBase = "input=";
+    xmlhttp.send(inputBase.concat(enteredInput));
+  }
+
   return (
     <View style={{flexDirection: 'column', flex: 64}}>
       <View style={styles.header}>
         <Text style={{padding: 75, color: 'black', fontSize: 20, alignItems: 'center', justifyContent: 'center'}}>The Ol' War Game</Text>
+      </View>
+      <View style={styles.header}>
+        <TextInput
+          style={{height: 40, width: 350, borderColor: 'gray', borderWidth: 1}}
+          onChangeText={urlHandler}
+          value={enteredURL}
+          placeholder={'can copy-paste'}
+        />
       </View>
       <View style={{flexDirection: 'row'}}>
         <Button
@@ -17,6 +53,11 @@ export default function App() {
         <Button
           onPress={sendInput}
           title='POST'
+        />
+        <TextInput
+          style={{height: 40, width: 60, borderColor: 'gray', borderWidth: 1}}
+          onChangeText={inputHandler}
+          value={enteredInput}
         />
       </View>
       <View style={styles.screen}>
@@ -121,23 +162,6 @@ var loadXML = () => {
   xmlhttp.send();
 }
 
-var sendInput = () => {
-  console.log("sendInput");
-  var xmlhttp = new XMLHttpRequest();
-  xmlhttp.onreadystatechange = function() {
-    if(this.readyState == 4 && this.status == 200) {
-      console.log("success");
-      console.log(xmlhttp);
-      return this;
-    }
-  };
-  xmlhttp.open("POST", "http://ec2-3-21-232-145.us-east-2.compute.amazonaws.com/index.php", true);
-  xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-  // xmlhttp.open("GET", "http://localhost:8080/GameState.xml", true);
-  xmlhttp.send("input=A2,A5");
-}
-
-
 var readFresh = (xml) => {
   console.log("readFresh");
   var x, i, xmlDoc, txt;
@@ -152,7 +176,6 @@ var readFresh = (xml) => {
 }
 
 var updateBoard = (xml) => {
-
   xmlDoc = xml.responseXML;
   
   var i;
@@ -171,7 +194,7 @@ var updateBoard = (xml) => {
 
 const styles = StyleSheet.create({
   header: {
-    paddingTop: 45,
+    paddingTop: 30,
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center'
