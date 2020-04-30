@@ -164,30 +164,39 @@ var loadXML = () => {
   };
   xmlhttp.open("GET", "http://ec2-3-21-232-145.us-east-2.compute.amazonaws.com/GameState.xml", true);
   // xmlhttp.open("GET", "http://localhost:8080/GameState.xml", true);
+  xmlhttp.overrideMimeType('application/xml');
   xmlhttp.send();
 }
 
 var readFresh = (xml) => {
   console.log("readFresh");
-  var x, i, xmlDoc, txt;
-  xmlDoc = xml.responseXML;
+  var x, i, xmlDoc, doc, txt;
+  doc = xml.response;
+  var DOMParser = require('xmldom').DOMParser;
+  xmlDoc = new DOMParser().parseFromString(doc, 'text/xml');
+  console.dir(xmlDoc);
+  // parseString(doc, function(err,result) {
+  //   console.dir(result);
+  // });
   console.log("readFresh2");
   txt = "";
-  txt = xmlDoc.children[0].children[0].attributes[1].nodeValue;
+  txt = xmlDoc.childNodes[2].childNodes[1].attributes[1].nodeValue;
   console.log(txt);
-  xmlDoc.children[0].children[0].attributes[1].nodeValue = "0";
-  txt = xmlDoc.children[0].children[0].attributes[1].nodeValue;
+  xmlDoc.childNodes[2].childNodes[1].attributes[1].nodeValue = "0";
+  txt = xmlDoc.childNodes[2].childNodes[1].attributes[1].nodeValue;
   console.log(txt);
 }
 
 var updateBoard = (xml) => {
-  xmlDoc = xml.responseXML;
-  
+  var doc = xml.response;
+  var DOMParser = require('xmldom').DOMParser;
+  var xmlDoc = new DOMParser().parseFromString(doc, 'text/xml');
+
   var i;
   for(i=0; i<64; i++) {
     var piece = "";
-    piece = piece.concat(xmlDoc.children[0].children[4].children[i].attributes[3].nodeValue,
-                     xmlDoc.children[0].children[4].children[i].attributes[2].nodeValue);
+    piece = piece.concat(xmlDoc.childNodes[2].childNodes[9].childNodes[i*2 + 1].attributes[3].nodeValue,
+                     xmlDoc.childNodes[2].childNodes[9].childNodes[i*2 + 1].attributes[2].nodeValue);
     // document.getElementById(i.toString()).innerHTML = piece;
     console.log(piece);
   }
