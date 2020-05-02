@@ -1,13 +1,30 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, TouchableHighlight } from 'react-native';
 
 const Square = props => {
+
+  var [pressed, setPressed] = useState(false);
+
+  var [styleOverride, setStyleOverride] = useState(props.style);
+  const onPress = () => {
+    if( pressed ) {
+      // setStyleOverride(props.style);
+      setPressed(false);
+    }
+    else {
+      // setStyleOverride({backgroundColor: 'red'});
+      setPressed(true);
+    }
+
+    props.touchHandler(props.location);
+  }
+
   return (
-    <View>
-      <View style={{...styles.square, ...props.style}}>
+    <TouchableHighlight onPress={onPress}>
+      <View style={{...styles.square, ...styleOverride}}>
         <Text style={{...styles.squareTitle, ...props.color}}>{props.title}</Text>
       </View>
-    </View>
+    </TouchableHighlight>
   );
 };
 
