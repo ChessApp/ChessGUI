@@ -6,20 +6,34 @@ import {
   HeaderBackground,
 } from "@react-navigation/stack";
 
+import StartScreen from "./screens/StartScreen"
 import MainScreen from "./screens/MainScreen"
 import PostLoadScreen from "./screens/PostLoadScreen"
 import GetLoadScreen from "./screens/GetLoadScreen"
 
 const Stack = createStackNavigator();
+const ThemeContext = React.createContext("W");
 
 export default function App() {
+
+  const [playerTurn, setPlayerTurn] = useState("");
+  const turnHandler = turn => {
+    console.log("turnHandler");
+    setPlayerTurn(turn);
+  }
+
   return (
     <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="main" component={MainScreen}></Stack.Screen>
-        <Stack.Screen name="post" component={PostLoadScreen}></Stack.Screen>
-        <Stack.Screen name="get"  component={GetLoadScreen}></Stack.Screen>
-      </Stack.Navigator>
+        <Stack.Navigator>
+          <Stack.Screen name="start">
+            {props => <StartScreen {...props} setTurn={turnHandler} />}
+          </Stack.Screen>
+          <Stack.Screen name="main">
+            {props => <MainScreen {...props} userTeam={playerTurn} />}
+          </Stack.Screen>
+          <Stack.Screen name="post"  component={PostLoadScreen}></Stack.Screen>
+          <Stack.Screen name="get"   component={GetLoadScreen}></Stack.Screen>
+        </Stack.Navigator>
     </NavigationContainer>
   );
 }

@@ -9,6 +9,7 @@ import {
 import Square from '../components/Square'
 
 var init = false;
+var count = 0;
 
 const MainScreen = props => {
 
@@ -57,6 +58,11 @@ const MainScreen = props => {
 
   var [turn, setTurn] = useState("");
 
+  // const [playerTurn, setPlayerTurn] = useState("");
+  // const playerTurnHandler = (turn) => {
+  //   setPlayerTurn(turn);
+  // }
+
   const sendInput = () => {
     props.navigation.navigate("post");
     var xmlhttp = new XMLHttpRequest();
@@ -87,8 +93,13 @@ const MainScreen = props => {
     xmlhttp.onreadystatechange = function() {
       if(this.readyState == 4 && this.status == 200) {
         readFresh(this);
-        updateBoard(this);
+        var turn = updateBoard(this);
         props.navigation.navigate("main");
+        console.log("check turn: ", props.userTeam);
+        if( turn !== props.userTeam && props.userTeam !== "" ) {
+          console.log("running it back: ", turn);
+          loadXMLWrapper();
+        }
         return this;
       }
     };
@@ -137,15 +148,24 @@ const MainScreen = props => {
       else {
         addColorHandler({});
       }
-
-      setTurn(xmlDoc.childNodes[2].childNodes[5].attributes[0].nodeValue);
     }
+
+    var turn = xmlDoc.childNodes[2].childNodes[5].attributes[0].nodeValue;
+    setTurn(turn);
+    console.log("update turn: ", turn);
+    return turn;
   }
 
   if( init == false ) {
     loadXMLWrapper();
     init = true;
   }
+
+  // if( count % 100 == 0 ) {
+  //   console.log(count);
+  // }
+  // console.log(count);
+  count = count + 1;
 
   // setTimeout(() => { console.log("render"); }, 2000);
 
