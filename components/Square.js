@@ -8,11 +8,9 @@ const Square = props => {
   var [styleOverride, setStyleOverride] = useState(props.style);
   const onPress = () => {
     if( pressed ) {
-      // setStyleOverride(props.style);
       setPressed(false);
     }
     else {
-      // setStyleOverride({backgroundColor: 'red'});
       setPressed(true);
     }
 

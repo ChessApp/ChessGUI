@@ -58,11 +58,6 @@ const MainScreen = props => {
 
   var [turn, setTurn] = useState("");
 
-  // const [playerTurn, setPlayerTurn] = useState("");
-  // const playerTurnHandler = (turn) => {
-  //   setPlayerTurn(turn);
-  // }
-
   const sendInput = () => {
     props.navigation.navigate("post");
     var xmlhttp = new XMLHttpRequest();
@@ -72,10 +67,7 @@ const MainScreen = props => {
         return this;
       }
     };
-    // xmlhttp.open("POST", enteredURL.concat("/index.php"), true);
     xmlhttp.open("POST", "http://ec2-3-21-232-145.us-east-2.compute.amazonaws.com/index.php", true);
-    // xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    // xmlhttp.open("GET", "http://localhost:8080/GameState.xml", true);
     var inputBase = "input=";
     xmlhttp.send(inputBase.concat(touchInput));
     Keyboard.dismiss();
@@ -109,8 +101,6 @@ const MainScreen = props => {
     xmlhttp.setRequestHeader('expires', '0');
     xmlhttp.setRequestHeader('expires', 'Tue, 01 Jan 1980 1:00:00 GMT');
     xmlhttp.setRequestHeader('pragma', 'no-cache');
-    // xmlhttp.open("GET", "http://localhost:8080/GameState.xml", true);
-    // xmlhttp.overrideMimeType('application/xml');
     xmlhttp.send();
   }
 
@@ -160,14 +150,6 @@ const MainScreen = props => {
     loadXMLWrapper();
     init = true;
   }
-
-  // if( count % 100 == 0 ) {
-  //   console.log(count);
-  // }
-  // console.log(count);
-  count = count + 1;
-
-  // setTimeout(() => { console.log("render"); }, 2000);
 
   return (
     <TouchableWithoutFeedback onPress={() => {
