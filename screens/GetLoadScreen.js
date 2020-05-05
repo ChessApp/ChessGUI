@@ -13,7 +13,7 @@ const GetLoadScreen = props => {
   return (
     <View style={{flex: 1}}>
       <View style={{flex: 1}}>
-        <Text>The server is scanning for game updates! This should only take a few seconds...</Text>
+        <Text>Scanning the server for game updates! This should only take a few moments...</Text>
       </View>
       <View style={{flex: 1}}>
         <AnimatedLoader visible={true} animationStyle={styles.lottie}/>

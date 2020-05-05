@@ -13,7 +13,7 @@ const PostLoadScreen = props => {
   return (
     <View style={{flex: 1}}>
       <View style={{flex: 1}}>
-        <Text>The server is validating your move! This should only take a few seconds...</Text>
+        <Text>The server is validating your move! This should only take a few moments...</Text>
       </View>
       <View style={{flex: 1}}>
         <AnimatedLoader visible={true} animationStyle={styles.lottie}/>
