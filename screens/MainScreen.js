@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Button, Text, View, TextInput, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { StyleSheet, Button, Text, View, TextInput, Keyboard, TouchableWithoutFeedback, Alert } from 'react-native';
 import { NavigationContainer } from "@react-navigation/native";
 import {
   createStackNavigator,
@@ -57,6 +57,9 @@ const MainScreen = props => {
   }
 
   var [turn, setTurn] = useState("");
+  const setTurnHandler = turn => {
+    setTurn(turn);
+  }
 
   const sendInput = () => {
     props.navigation.navigate("post");
@@ -67,7 +70,7 @@ const MainScreen = props => {
         return this;
       }
     };
-    xmlhttp.open("POST", "http://ec2-3-21-232-145.us-east-2.compute.amazonaws.com/index.php", true);
+    xmlhttp.open("POST", "http://ec2-18-220-151-116.us-east-2.compute.amazonaws.com/index.php", true);
     var inputBase = "input=";
     xmlhttp.send(inputBase.concat(touchInput));
     Keyboard.dismiss();
@@ -86,16 +89,24 @@ const MainScreen = props => {
       if(this.readyState == 4 && this.status == 200) {
         readFresh(this);
         var turn = updateBoard(this);
+
         props.navigation.navigate("main");
-        console.log("check turn: ", props.userTeam);
+
         if( turn !== props.userTeam && props.userTeam !== "" ) {
-          console.log("running it back: ", turn);
-          loadXMLWrapper();
+          // The time delay seems to ensure that the loading animation
+          // continually runs.
+          setTimeout(() => { loadXMLWrapper(); }, 1000);
         }
+        // Important for this to come after switching back to the main screen,
+        // so it does not get clobbered on the switch. The delay seems to ensure
+        // it does not get clobbered.
+        setTimeout(() => { updateAlerts(this); }, 1000);
+        
         return this;
       }
     };
-    xmlhttp.open("GET", "http://ec2-3-21-232-145.us-east-2.compute.amazonaws.com/GameState.xml", true);
+
+    xmlhttp.open("GET", "http://ec2-18-220-151-116.us-east-2.compute.amazonaws.com/GameState.xml", true);
     xmlhttp.setRequestHeader('cache-control', 'no-cache, must-revalidate, post-check=0, pre-check=0');
     xmlhttp.setRequestHeader('cache-control', 'max-age=0');
     xmlhttp.setRequestHeader('expires', '0');
@@ -124,8 +135,8 @@ const MainScreen = props => {
 
     var i;
     for(i=0; i<64; i++) {
-      var piece = xmlDoc.childNodes[2].childNodes[9].childNodes[i*2 + 1].attributes[2].nodeValue;
-      var color = xmlDoc.childNodes[2].childNodes[9].childNodes[i*2 + 1].attributes[3].nodeValue;
+      var piece = xmlDoc.childNodes[2].childNodes[11].childNodes[i*2 + 1].attributes[2].nodeValue;
+      var color = xmlDoc.childNodes[2].childNodes[11].childNodes[i*2 + 1].attributes[3].nodeValue;
 
       addPieceHandler(piece);
 
@@ -141,9 +152,41 @@ const MainScreen = props => {
     }
 
     var turn = xmlDoc.childNodes[2].childNodes[5].attributes[0].nodeValue;
-    setTurn(turn);
-    console.log("update turn: ", turn);
+    setTurnHandler(turn);
     return turn;
+  }
+
+  const updateAlerts = xml => {
+    var doc = xml.response;
+    var DOMParser = require('xmldom').DOMParser;
+    var xmlDoc = new DOMParser().parseFromString(doc, 'text/xml');
+
+    // If the invalidMove flag is set, then create an alert and pass the message
+    // to it.
+    if( xmlDoc.childNodes[2].childNodes[1].attributes[2].nodeValue == 1 ) {
+      if( turn == xmlDoc.childNodes[2].childNodes[5].attributes[0].nodeValue ) {
+        createMessageAlert(xmlDoc.childNodes[2].childNodes[9].attributes[0].nodeValue);
+      }
+    }
+  }
+
+  const createMessageAlert = (message) => {
+    Alert.alert(
+      "Invalid Move",
+      message,
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel pressed"),
+          style: "cancel"
+        },
+        {
+          text: "OK",
+          onPress: () => console.log("OK pressed")
+        }
+      ],
+      { cancelable: false }
+    );
   }
 
   if( init == false ) {
