@@ -57,6 +57,9 @@ const MainScreen = props => {
   }
 
   var [turn, setTurn] = useState("");
+  const setTurnHandler = turn => {
+    setTurn(turn);
+  }
 
   const sendInput = () => {
     props.navigation.navigate("post");
@@ -67,7 +70,7 @@ const MainScreen = props => {
         return this;
       }
     };
-    xmlhttp.open("POST", "http://ec2-3-21-232-145.us-east-2.compute.amazonaws.com/index.php", true);
+    xmlhttp.open("POST", "http://ec2-18-220-151-116.us-east-2.compute.amazonaws.com/index.php", true);
     var inputBase = "input=";
     xmlhttp.send(inputBase.concat(touchInput));
     Keyboard.dismiss();
@@ -103,7 +106,7 @@ const MainScreen = props => {
       }
     };
 
-    xmlhttp.open("GET", "http://ec2-3-21-232-145.us-east-2.compute.amazonaws.com/GameState.xml", true);
+    xmlhttp.open("GET", "http://ec2-18-220-151-116.us-east-2.compute.amazonaws.com/GameState.xml", true);
     xmlhttp.setRequestHeader('cache-control', 'no-cache, must-revalidate, post-check=0, pre-check=0');
     xmlhttp.setRequestHeader('cache-control', 'max-age=0');
     xmlhttp.setRequestHeader('expires', '0');
@@ -149,7 +152,7 @@ const MainScreen = props => {
     }
 
     var turn = xmlDoc.childNodes[2].childNodes[5].attributes[0].nodeValue;
-    setTurn(turn);
+    setTurnHandler(turn);
     return turn;
   }
 
@@ -161,7 +164,9 @@ const MainScreen = props => {
     // If the invalidMove flag is set, then create an alert and pass the message
     // to it.
     if( xmlDoc.childNodes[2].childNodes[1].attributes[2].nodeValue == 1 ) {
-      createMessageAlert(xmlDoc.childNodes[2].childNodes[9].attributes[0].nodeValue);
+      if( turn == xmlDoc.childNodes[2].childNodes[5].attributes[0].nodeValue ) {
+        createMessageAlert(xmlDoc.childNodes[2].childNodes[9].attributes[0].nodeValue);
+      }
     }
   }
 
