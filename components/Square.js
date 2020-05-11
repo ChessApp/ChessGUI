@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
   },
   squareTitle: {
     color: 'black',
-    fontSize: 28,
+    fontSize: 30,
     alignItems: 'center',
     justifyContent: 'center'
   }

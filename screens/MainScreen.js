@@ -5,6 +5,7 @@ import {
   createStackNavigator,
   HeaderBackground,
 } from "react-navigation-stack";
+import AnimatedLoader from 'react-native-animated-loader';
 
 import Board from '../components/Board'
 
@@ -69,7 +70,7 @@ const MainScreen = props => {
   }
 
   const sendInput = () => {
-    props.navigation.navigate("post");
+    loaderVisibilityHandler(true, "Validating your move!");
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function() {
       if(this.readyState == 4 && this.status == 200) {
@@ -85,7 +86,7 @@ const MainScreen = props => {
   }
 
   const loadXMLWrapper = () => {
-    props.navigation.navigate("get");
+    loaderVisibilityHandler(true, "Server is scanning for updates!");
     loadXML();
   }
 
@@ -97,7 +98,7 @@ const MainScreen = props => {
         readFresh(this);
         var turn = updateBoard(this);
 
-        props.navigation.navigate("main");
+        loaderVisibilityHandler(false);
 
         if( turn !== props.userTeam && props.userTeam !== "" ) {
           // The time delay seems to ensure that the loading animation
@@ -199,6 +200,16 @@ const MainScreen = props => {
     );
   }
 
+  var [loaderVisibility, setLoaderVisibility] = useState(false);
+  var [loaderVisibilityMessage, setLoaderVisibilityMessage] = useState("");
+  const loaderVisibilityHandler = (state, message) => {
+    setLoaderVisibility(state);
+    if( state == true )
+      setLoaderVisibilityMessage(message);
+    else
+      setLoaderVisibilityMessage("");
+  }
+
   if( init == false ) {
     loadXMLWrapper();
     init = true;
@@ -208,12 +219,12 @@ const MainScreen = props => {
     <TouchableWithoutFeedback onPress={() => {
       Keyboard.dismiss();
     }}>
-      <View style={{height: '100%', width: '100%', flexDirection: 'column', backgroundColor: 'black'}}>
-        <View style={{...styles.header, height: '12.5%'}}>
+      <View style={{height: '100%', width: '100%', flexDirection: 'column', backgroundColor: 'slategray'}}>
+        <View style={{...styles.header, height: '15%'}}>
           <Text style={{padding: 10, color: 'white', fontSize: 20, alignItems: 'center', justifyContent: 'center'}}>The Ol' War Game</Text>
           <Text style={{padding: 0, color: 'white', fontSize: 20, alignItems: 'center', justifyContent: 'center'}}>Courtesy of Booty and Sons</Text>
         </View>
-        <View style={{...styles.header, height: '7.5%', borderColor: 'white', borderWidth: 1}}>
+        <View style={{...styles.header, height: '5%', borderColor: 'white', borderWidth: 1}}>
           <TextInput
             style={{height: '100%', width: '100%'}}
             onChangeText={urlHandler}
@@ -221,12 +232,19 @@ const MainScreen = props => {
             placeholder={'paste server url here'}
           />
         </View>
+        <View style={{...styles.header, height: '5%', borderColor: 'white', borderWidth: 1, alignItems: 'center', justifyContent: 'center'}}>
+          <AnimatedLoader visible={loaderVisibility} animationStyle={styles.lottie}/>
+          <Text style={{color: 'orange', fontSize: 20}}>
+            {loaderVisibilityMessage}
+          </Text>
+        </View>
         <View style={{...styles.header, flexDirection: 'row', height: '7.5%'}}>
           <View style={{height: '100%', backgroundColor: 'magenta', borderColor: 'white', borderWidth: 1, alignItems: 'center', justifyContent: 'center'}}>
             <Button
               onPress={loadXMLWrapper}
               color='white'
               title='Check for Updates'
+              style={{alignItems: 'center', justifyContent: 'center'}}
             />
           </View>
           <View style={{height: '100%', width: '25%', backgroundColor: 'slategray', borderColor: 'white', borderWidth: 1, alignItems: 'center', justifyContent: 'center'}}>
@@ -237,7 +255,7 @@ const MainScreen = props => {
         </View>
         <View style={{flexDirection: 'row', height: '7.5%', backgroundColor: 'slategray', alignItems: 'center', justifyContent: 'center'}}>
           <View style={{height: '100%', width: '25%', justifyContent: 'center', alignItems: 'center', borderColor: 'white', borderWidth: 1}}>
-            <Text style={{fontSize: 18, color: 'white', alignItems: 'center', justifyContent: 'center'}}>
+            <Text style={{fontSize: 18, color: 'white'}}>
               {touchInput}
             </Text>
           </View>
@@ -256,9 +274,11 @@ const MainScreen = props => {
             />
           </View>
         </View>
-        <View style={{width: '100%', height: '65%', backgroundColor: 'white'}}>
+        <View style={{width: '100%', height: '59%', backgroundColor: 'saddlebrown'}}>
           <Board pieceList={pieceList} colorList={colorList} touchInputHandler={touchInputHandler}>
           </Board>
+        </View>
+        <View style={{width: '100%', height: '1%', backgroundColor: 'saddlebrown'}}>
         </View>
       </View>
     </TouchableWithoutFeedback>
@@ -276,18 +296,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'slategray',
     borderColor: 'black'
   },
-  screen: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between'
-  },
-  screen2: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between'
-  },
-  square: {
-    backgroundColor: 'darkturquoise'
+  lottie: {
+    bottom: '30%',
+    width: 100,
+    height: 100
   }
 });
 

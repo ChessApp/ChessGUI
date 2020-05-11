@@ -114,7 +114,8 @@ const styles = StyleSheet.create({
     borderColor: 'black',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    backgroundColor: 'saddlebrown'
   },
   squareTitle: {
     color: 'black',
