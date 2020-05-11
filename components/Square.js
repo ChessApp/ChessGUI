@@ -18,22 +18,22 @@ const Square = props => {
   }
 
   return (
-    <TouchableHighlight onPress={onPress}>
-      <View style={{...styles.square, ...styleOverride}}>
-        <Text style={{...styles.squareTitle, ...props.color}}>{props.title}</Text>
-      </View>
-    </TouchableHighlight>
+    <View style={{...styles.square, ...styleOverride}}>
+      <TouchableHighlight onPress={onPress} underlayColor='lawngreen' style={{width: '100%', height: '100%'}}>
+        <View style={{height: '100%', width: '100%', alignItems: 'center', justifyContent: 'center'}}>
+          <Text style={{...styles.squareTitle, ...props.color}}>{props.title}</Text>
+        </View>
+      </TouchableHighlight>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   square: {
-    width: 47,
-    height: 47,
+    width: '12.5%',
+    height: '100%',
     paddingTop: 0,
-    backgroundColor: '#f7287b',
-    borderColor: "#434343",
-    borderRadius: 5,
+    borderColor: 'black',
     borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center'
