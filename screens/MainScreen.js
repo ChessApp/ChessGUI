@@ -60,6 +60,11 @@ const MainScreen = props => {
 
   var [turn, setTurn] = useState("");
   const setTurnHandler = turn => {
+    if( turn == "B" )
+      turn = "Black";
+    else
+      turn = "White";
+
     setTurn(turn);
   }
 
@@ -224,7 +229,7 @@ const MainScreen = props => {
               title='Check for Updates'
             />
           </View>
-          <View style={{height: '100%', width: '25%', backgroundColor: 'magenta', borderColor: 'white', borderWidth: 1, alignItems: 'center', justifyContent: 'center'}}>
+          <View style={{height: '100%', width: '25%', backgroundColor: 'slategray', borderColor: 'white', borderWidth: 1, alignItems: 'center', justifyContent: 'center'}}>
             <Text style={{color: 'white', fontSize: 18}}>
               Turn: {turn}
             </Text>

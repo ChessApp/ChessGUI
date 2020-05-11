@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
     height: '100%',
     width: '12.5%',
     backgroundColor: 'burlywood',
-    borderColor: "black",
+    borderColor: "saddlebrown",
     borderWidth: 1,
     justifyContent: 'center'
   },
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
     height: '100%',
     width: '12.5%',
     backgroundColor: 'peru',
-    borderColor: "black",
+    borderColor: "saddlebrown",
     borderWidth: 1,
     justifyContent: 'center'
   },
