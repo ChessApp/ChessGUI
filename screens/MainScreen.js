@@ -103,12 +103,12 @@ const MainScreen = props => {
         if( turn !== props.userTeam && props.userTeam !== "" ) {
           // The time delay seems to ensure that the loading animation
           // continually runs.
-          setTimeout(() => { loadXMLWrapper(); }, 1000);
+          setTimeout(() => { loadXMLWrapper(); }, 250);
         }
         // Important for this to come after switching back to the main screen,
         // so it does not get clobbered on the switch. The delay seems to ensure
         // it does not get clobbered.
-        setTimeout(() => { updateAlerts(this); }, 1000);
+        setTimeout(() => { updateAlerts(this); }, 250);
         
         return this;
       }
@@ -175,15 +175,23 @@ const MainScreen = props => {
     // If the invalidMove flag is set, then create an alert and pass the message
     // to it.
     if( xmlDoc.childNodes[2].childNodes[1].attributes[2].nodeValue == 1 ) {
-      if( turn == xmlDoc.childNodes[2].childNodes[5].attributes[0].nodeValue ) {
-        createMessageAlert(xmlDoc.childNodes[2].childNodes[9].attributes[0].nodeValue);
+      if( props.userTeam == xmlDoc.childNodes[2].childNodes[5].attributes[0].nodeValue ) {
+        createMessageAlert("Invalid Move", xmlDoc.childNodes[2].childNodes[9].attributes[0].nodeValue);
+      }
+    }
+    
+    // If the checkStatus flag is set, then create an alert and pass the message
+    // to it.
+    if( xmlDoc.childNodes[2].childNodes[5].attributes[1].nodeValue > 0 ) {
+      if( props.userTeam == xmlDoc.childNodes[2].childNodes[5].attributes[0].nodeValue ) {
+        createMessageAlert("In check!", "You are currently in check!");
       }
     }
   }
 
-  const createMessageAlert = (message) => {
+  const createMessageAlert = (subject, message) => {
     Alert.alert(
-      "Invalid Move",
+      subject,
       message,
       [
         {
