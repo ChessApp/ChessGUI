@@ -175,11 +175,13 @@ const MainScreen = props => {
     // If the invalidMove flag is set, then create an alert and pass the message
     // to it.
     if( xmlDoc.childNodes[2].childNodes[1].attributes[2].nodeValue == 1 ) {
-      if( turn == xmlDoc.childNodes[2].childNodes[5].attributes[0].nodeValue ) {
+      if( props.userTeam == xmlDoc.childNodes[2].childNodes[5].attributes[0].nodeValue ) {
         createMessageAlert("Invalid Move", xmlDoc.childNodes[2].childNodes[9].attributes[0].nodeValue);
       }
     }
     
+    // If the checkStatus flag is set, then create an alert and pass the message
+    // to it.
     if( xmlDoc.childNodes[2].childNodes[5].attributes[1].nodeValue > 0 ) {
       if( props.userTeam == xmlDoc.childNodes[2].childNodes[5].attributes[0].nodeValue ) {
         createMessageAlert("In check!", "You are currently in check!");
