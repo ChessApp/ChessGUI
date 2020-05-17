@@ -5,8 +5,9 @@ import {
   createStackNavigator,
   HeaderBackground,
 } from "react-navigation-stack";
+import AnimatedLoader from 'react-native-animated-loader';
 
-import Square from '../components/Square'
+import Board from '../components/Board'
 
 var init = false;
 var count = 0;
@@ -15,10 +16,12 @@ const MainScreen = props => {
 
   var [touchInput, setTouchInput] = useState("");
   const touchInputHandler = input => {
-    if( touchInput !== "" ) {
-      input = touchInput.concat(",", input);
+    if( touchInput.length < 5 ) {
+      if( touchInput !== "" ) {
+        input = touchInput.concat(",", input);
+      }
+      setTouchInput(input);
     }
-    setTouchInput(input);
   }
   const clearTouchInput = () => {
     setTouchInput("");
@@ -58,11 +61,16 @@ const MainScreen = props => {
 
   var [turn, setTurn] = useState("");
   const setTurnHandler = turn => {
+    if( turn == "B" )
+      turn = "Black";
+    else
+      turn = "White";
+
     setTurn(turn);
   }
 
   const sendInput = () => {
-    props.navigation.navigate("post");
+    loaderVisibilityHandler(true, "Validating your move!");
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function() {
       if(this.readyState == 4 && this.status == 200) {
@@ -78,7 +86,7 @@ const MainScreen = props => {
   }
 
   const loadXMLWrapper = () => {
-    props.navigation.navigate("get");
+    loaderVisibilityHandler(true, "Server is scanning for updates!");
     loadXML();
   }
 
@@ -90,7 +98,7 @@ const MainScreen = props => {
         readFresh(this);
         var turn = updateBoard(this);
 
-        props.navigation.navigate("main");
+        loaderVisibilityHandler(false);
 
         if( turn !== props.userTeam && props.userTeam !== "" ) {
           // The time delay seems to ensure that the loading animation
@@ -138,6 +146,9 @@ const MainScreen = props => {
       var piece = xmlDoc.childNodes[2].childNodes[11].childNodes[i*2 + 1].attributes[2].nodeValue;
       var color = xmlDoc.childNodes[2].childNodes[11].childNodes[i*2 + 1].attributes[3].nodeValue;
 
+      if( piece == "" ) {
+        piece = " ";
+      }
       addPieceHandler(piece);
 
       if( color == "B" ) {
@@ -189,6 +200,16 @@ const MainScreen = props => {
     );
   }
 
+  var [loaderVisibility, setLoaderVisibility] = useState(false);
+  var [loaderVisibilityMessage, setLoaderVisibilityMessage] = useState("");
+  const loaderVisibilityHandler = (state, message) => {
+    setLoaderVisibility(state);
+    if( state == true )
+      setLoaderVisibilityMessage(message);
+    else
+      setLoaderVisibilityMessage("");
+  }
+
   if( init == false ) {
     loadXMLWrapper();
     init = true;
@@ -198,120 +219,67 @@ const MainScreen = props => {
     <TouchableWithoutFeedback onPress={() => {
       Keyboard.dismiss();
     }}>
-      <View style={{flexDirection: 'column', flex: 64}}>
-        <View style={styles.header}>
-          <Text style={{padding: 30, color: 'black', fontSize: 20, alignItems: 'center', justifyContent: 'center'}}>The Ol' War Game</Text>
-          <Text style={{padding: 0, color: 'black', fontSize: 20, alignItems: 'center', justifyContent: 'center'}}>Courtesy of Booty and Sons</Text>
+      <View style={{height: '100%', width: '100%', flexDirection: 'column', backgroundColor: 'slategray'}}>
+        <View style={{...styles.header, height: '15%'}}>
+          <Text style={{padding: 10, color: 'white', fontSize: 20, alignItems: 'center', justifyContent: 'center'}}>The Ol' War Game</Text>
+          <Text style={{padding: 0, color: 'white', fontSize: 20, alignItems: 'center', justifyContent: 'center'}}>Courtesy of Booty and Sons</Text>
         </View>
-        <View style={styles.header}>
+        <View style={{...styles.header, height: '5%', borderColor: 'white', borderWidth: 1}}>
           <TextInput
-            style={{height: 40, width: 350, borderColor: 'gray', borderWidth: 1}}
+            style={{height: '100%', width: '100%'}}
             onChangeText={urlHandler}
             value={enteredURL}
             placeholder={'paste server url here'}
           />
         </View>
-        <View style={{flexDirection: 'row'}}>
-          <Button
-            onPress={loadXMLWrapper}
-            title='GET'
-          />
-          <Button
-            onPress={sendInput}
-            title='POST'
-          />
-          <Text style={{height: 40, width: 60, borderColor: 'gray', borderWidth: 1, alignItems: 'center', justifyContent: 'center'}}>
-            {touchInput}
-          </Text>
-          <Button
-            onPress={clearTouchInput}
-            title='Clear Input'
-          />
-          <Text style={{height: 40, width: 60, borderColor: 'gray', borderWidth: 1, alignItems: 'center', justifyContent: 'center'}}>
-            Turn: {turn}
+        <View style={{...styles.header, height: '5%', borderColor: 'white', borderWidth: 1, alignItems: 'center', justifyContent: 'center'}}>
+          <AnimatedLoader visible={loaderVisibility} animationStyle={styles.lottie}/>
+          <Text style={{color: 'orange', fontSize: 20}}>
+            {loaderVisibilityMessage}
           </Text>
         </View>
-        <View style={styles.screen}>
-          <Square title={pieceList[63]} color={colorList[63]} touchHandler={touchInputHandler} location="A8" style={styles.square} />
-          <Square title={pieceList[62]} color={colorList[62]} touchHandler={touchInputHandler} location="B8" />
-          <Square title={pieceList[61]} color={colorList[61]} touchHandler={touchInputHandler} location="C8" style={styles.square} />
-          <Square title={pieceList[60]} color={colorList[60]} touchHandler={touchInputHandler} location="D8" />
-          <Square title={pieceList[59]} color={colorList[59]} touchHandler={touchInputHandler} location="E8" style={styles.square} />
-          <Square title={pieceList[58]} color={colorList[58]} touchHandler={touchInputHandler} location="F8" />
-          <Square title={pieceList[57]} color={colorList[57]} touchHandler={touchInputHandler} location="G8" style={styles.square} />
-          <Square title={pieceList[56]} color={colorList[56]} touchHandler={touchInputHandler} location="H8" />
+        <View style={{...styles.header, flexDirection: 'row', height: '7.5%'}}>
+          <View style={{height: '100%', backgroundColor: 'magenta', borderColor: 'white', borderWidth: 1, alignItems: 'center', justifyContent: 'center'}}>
+            <Button
+              onPress={loadXMLWrapper}
+              color='white'
+              title='Check for Updates'
+              style={{alignItems: 'center', justifyContent: 'center'}}
+            />
+          </View>
+          <View style={{height: '100%', width: '25%', backgroundColor: 'slategray', borderColor: 'white', borderWidth: 1, alignItems: 'center', justifyContent: 'center'}}>
+            <Text style={{color: 'white', fontSize: 18}}>
+              Turn: {turn}
+            </Text>
+          </View>
         </View>
-        <View style={styles.screen}>
-          <Square title={pieceList[55]} color={colorList[55]} touchHandler={touchInputHandler} location="A7" />
-          <Square title={pieceList[54]} color={colorList[54]} touchHandler={touchInputHandler} location="B7" style={styles.square} />
-          <Square title={pieceList[53]} color={colorList[53]} touchHandler={touchInputHandler} location="C7" />
-          <Square title={pieceList[52]} color={colorList[52]} touchHandler={touchInputHandler} location="D7" style={styles.square} />
-          <Square title={pieceList[51]} color={colorList[51]} touchHandler={touchInputHandler} location="E7" />
-          <Square title={pieceList[50]} color={colorList[50]} touchHandler={touchInputHandler} location="F7" style={styles.square} />
-          <Square title={pieceList[49]} color={colorList[49]} touchHandler={touchInputHandler} location="G7" />
-          <Square title={pieceList[48]} color={colorList[48]} touchHandler={touchInputHandler} location="H7" style={styles.square} />
+        <View style={{flexDirection: 'row', height: '7.5%', backgroundColor: 'slategray', alignItems: 'center', justifyContent: 'center'}}>
+          <View style={{height: '100%', width: '25%', justifyContent: 'center', alignItems: 'center', borderColor: 'white', borderWidth: 1}}>
+            <Text style={{fontSize: 18, color: 'white'}}>
+              {touchInput}
+            </Text>
+          </View>
+          <View style={{height: '100%', backgroundColor: 'limegreen', borderColor: 'white', borderWidth: 1, alignItems: 'center', justifyContent: 'center'}}>
+            <Button
+              onPress={sendInput}
+              color='white'
+              title='Confirm Move'
+            />
+          </View>
+          <View style={{height: '100%', backgroundColor: 'orangered', borderColor: 'white', borderWidth: 1, alignItems: 'center', justifyContent: 'center'}}>
+            <Button
+              onPress={clearTouchInput}
+              color='white'  
+              title='Clear Input'
+            />
+          </View>
         </View>
-        <View style={styles.screen}>
-          <Square title={pieceList[47]} color={colorList[47]} touchHandler={touchInputHandler} location="A6" style={styles.square} />
-          <Square title={pieceList[46]} color={colorList[46]} touchHandler={touchInputHandler} location="B6" />
-          <Square title={pieceList[45]} color={colorList[45]} touchHandler={touchInputHandler} location="C6" style={styles.square} />
-          <Square title={pieceList[44]} color={colorList[44]} touchHandler={touchInputHandler} location="D6" />
-          <Square title={pieceList[43]} color={colorList[43]} touchHandler={touchInputHandler} location="E6" style={styles.square} />
-          <Square title={pieceList[42]} color={colorList[42]} touchHandler={touchInputHandler} location="F6" />
-          <Square title={pieceList[41]} color={colorList[41]} touchHandler={touchInputHandler} location="G6" style={styles.square} />
-          <Square title={pieceList[40]} color={colorList[40]} touchHandler={touchInputHandler} location="H6" />
+        <View style={{width: '100%', height: '59%', backgroundColor: 'saddlebrown'}}>
+          <Board pieceList={pieceList} colorList={colorList} touchInputHandler={touchInputHandler}>
+          </Board>
         </View>
-        <View style={styles.screen}>
-          <Square title={pieceList[39]} color={colorList[39]} touchHandler={touchInputHandler} location="A5" />
-          <Square title={pieceList[38]} color={colorList[38]} touchHandler={touchInputHandler} location="B5" style={styles.square} />
-          <Square title={pieceList[37]} color={colorList[37]} touchHandler={touchInputHandler} location="C5" />
-          <Square title={pieceList[36]} color={colorList[36]} touchHandler={touchInputHandler} location="D5" style={styles.square} />
-          <Square title={pieceList[35]} color={colorList[35]} touchHandler={touchInputHandler} location="E5" />
-          <Square title={pieceList[34]} color={colorList[34]} touchHandler={touchInputHandler} location="F5" style={styles.square} />
-          <Square title={pieceList[33]} color={colorList[33]} touchHandler={touchInputHandler} location="G5" />
-          <Square title={pieceList[32]} color={colorList[32]} touchHandler={touchInputHandler} location="H5" style={styles.square} />
+        <View style={{width: '100%', height: '1%', backgroundColor: 'saddlebrown'}}>
         </View>
-        <View style={styles.screen}>
-          <Square title={pieceList[31]} color={colorList[31]} touchHandler={touchInputHandler} location="A4" style={styles.square} />
-          <Square title={pieceList[30]} color={colorList[30]} touchHandler={touchInputHandler} location="B4" />
-          <Square title={pieceList[29]} color={colorList[29]} touchHandler={touchInputHandler} location="C4" style={styles.square} />
-          <Square title={pieceList[28]} color={colorList[28]} touchHandler={touchInputHandler} location="D4" />
-          <Square title={pieceList[27]} color={colorList[27]} touchHandler={touchInputHandler} location="E4" style={styles.square} />
-          <Square title={pieceList[26]} color={colorList[26]} touchHandler={touchInputHandler} location="F4" />
-          <Square title={pieceList[25]} color={colorList[25]} touchHandler={touchInputHandler} location="G4" style={styles.square} />
-          <Square title={pieceList[24]} color={colorList[24]} touchHandler={touchInputHandler} location="H4" />
-        </View>
-        <View style={styles.screen}>
-          <Square title={pieceList[23]} color={colorList[23]} touchHandler={touchInputHandler} location="A3" />
-          <Square title={pieceList[22]} color={colorList[22]} touchHandler={touchInputHandler} location="B3" style={styles.square} />
-          <Square title={pieceList[21]} color={colorList[21]} touchHandler={touchInputHandler} location="C3" />
-          <Square title={pieceList[20]} color={colorList[20]} touchHandler={touchInputHandler} location="D3" style={styles.square} />
-          <Square title={pieceList[19]} color={colorList[19]} touchHandler={touchInputHandler} location="E3" />
-          <Square title={pieceList[18]} color={colorList[18]} touchHandler={touchInputHandler} location="F3" style={styles.square} />
-          <Square title={pieceList[17]} color={colorList[17]} touchHandler={touchInputHandler} location="G3" />
-          <Square title={pieceList[16]} color={colorList[16]} touchHandler={touchInputHandler} location="H3" style={styles.square} />
-        </View>
-        <View style={styles.screen}>
-          <Square title={pieceList[15]} color={colorList[15]} touchHandler={touchInputHandler} location="A2" style={styles.square} />
-          <Square title={pieceList[14]} color={colorList[14]} touchHandler={touchInputHandler} location="B2" />
-          <Square title={pieceList[13]} color={colorList[13]} touchHandler={touchInputHandler} location="C2" style={styles.square} />
-          <Square title={pieceList[12]} color={colorList[12]} touchHandler={touchInputHandler} location="D2" />
-          <Square title={pieceList[11]} color={colorList[11]} touchHandler={touchInputHandler} location="E2" style={styles.square} />
-          <Square title={pieceList[10]} color={colorList[10]} touchHandler={touchInputHandler} location="F2" />
-          <Square title={pieceList[9]}  color={colorList[9]}  touchHandler={touchInputHandler} location="G2" style={styles.square} />
-          <Square title={pieceList[8]}  color={colorList[8]}  touchHandler={touchInputHandler} location="H2"  />
-        </View>
-        <View style={styles.screen}>
-          <Square title={pieceList[7]} color={colorList[7]} touchHandler={touchInputHandler} location="A1" />
-          <Square title={pieceList[6]} color={colorList[6]} touchHandler={touchInputHandler} location="B1" style={styles.square} />
-          <Square title={pieceList[5]} color={colorList[5]} touchHandler={touchInputHandler} location="C1" />
-          <Square title={pieceList[4]} color={colorList[4]} touchHandler={touchInputHandler} location="D1" style={styles.square} />
-          <Square title={pieceList[3]} color={colorList[3]} touchHandler={touchInputHandler} location="E1" />
-          <Square title={pieceList[2]} color={colorList[2]} touchHandler={touchInputHandler} location="F1" style={styles.square} />
-          <Square title={pieceList[1]} color={colorList[1]} touchHandler={touchInputHandler} location="G1" />
-          <Square title={pieceList[0]} color={colorList[0]} touchHandler={touchInputHandler} location="H1" style={styles.square} />
-        </View>
-        <View style={styles.header}/>
       </View>
     </TouchableWithoutFeedback>
   );
@@ -320,26 +288,18 @@ const MainScreen = props => {
 
 const styles = StyleSheet.create({
   header: {
-    paddingTop: 15,
+    paddingTop: 0,
+    height: '10%',
     width: '100%',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    backgroundColor: 'slategray',
+    borderColor: 'black'
   },
-  screen: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between'
-  },
-  screen2: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between'
-  },
-  square: {
-    backgroundColor: 'darkturquoise'
-  },
-  name: {
-    color: 'white'
+  lottie: {
+    bottom: '30%',
+    width: 100,
+    height: 100
   }
 });
 
