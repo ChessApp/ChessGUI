@@ -13,12 +13,4 @@
 
 ## Setting up development environment
 
-With npm installed, from the root of this repo after cloning, run the following command:
-
-`$ npm install`
-
-This will install all of the necessary dependencies that are not being tracked by git.
-
-Then use the following command to start the expo environment:
-
-`$ npm start`
+Navigate to the `env` directory from the root of this repository, and follow the instructions in the README.md there.
