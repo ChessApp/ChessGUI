@@ -1,6 +1,19 @@
 # ChessGUI
 
-With npm installed, from the root of this repo after cloning:
+## Demonstration of GUI
+
+- Making a move:
+
+![](demo/MoveDemo.gif)
+
+- Attempting to make an invalid move because a piece is obstructed by another piece.
+
+![](demo/InvalidMove.gif)
+
+
+## Setting up development environment
+
+With npm installed, from the root of this repo after cloning, run the following command:
 
 `$ npm install`
 
