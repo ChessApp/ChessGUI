@@ -6,7 +6,7 @@
 
 ![](demo/MoveDemo.gif)
 
-- Attempting to make an invalid move because a piece is obstructed by another piece.
+- Attempting to make an invalid move because a piece is obstructed by another piece:
 
 ![](demo/InvalidMove.gif)
 
