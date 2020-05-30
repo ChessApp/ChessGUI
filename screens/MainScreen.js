@@ -70,23 +70,29 @@ const MainScreen = props => {
   }
 
   const sendInput = () => {
-    loaderVisibilityHandler(true, "Validating your move!");
-    var xmlhttp = new XMLHttpRequest();
-    xmlhttp.onreadystatechange = function() {
-      if(this.readyState == 4 && this.status == 200) {
-        loadXML();
-        return this;
-      }
-    };
-    xmlhttp.open("POST", "http://ec2-18-220-151-116.us-east-2.compute.amazonaws.com/index.php", true);
-    var inputBase = "input=";
-    xmlhttp.send(inputBase.concat(touchInput));
-    Keyboard.dismiss();
-    clearTouchInput();
+    if( touchInput.length !== 5 ) {
+      console.log(touchInput);
+      createMessageAlert("Invalid Input", "Incomplete input. Please press Clear Input and then press the source square, followed by the destination square.")
+    }
+    else {
+      loaderVisibilityHandler(true, "Validating your move!");
+      var xmlhttp = new XMLHttpRequest();
+      xmlhttp.onreadystatechange = function() {
+        if(this.readyState == 4 && this.status == 200) {
+          loadXML();
+          return this;
+        }
+      };
+      xmlhttp.open("POST", "http://ec2-18-220-151-116.us-east-2.compute.amazonaws.com/index.php", true);
+      var inputBase = "input=";
+      xmlhttp.send(inputBase.concat(touchInput));
+      Keyboard.dismiss();
+      clearTouchInput();
+    }
   }
 
   const loadXMLWrapper = () => {
-    loaderVisibilityHandler(true, "Server is scanning for updates!");
+    loaderVisibilityHandler(true, "Scanning the server for updates!");
     loadXML();
   }
 
@@ -152,10 +158,10 @@ const MainScreen = props => {
       addPieceHandler(piece);
 
       if( color == "B" ) {
-        addColorHandler({color: 'black'});
+        addColorHandler("B");
       }
       else if( color == "W") {
-        addColorHandler({color: 'white'});
+        addColorHandler("W");
       }
       else {
         addColorHandler({});
@@ -171,6 +177,16 @@ const MainScreen = props => {
     var doc = xml.response;
     var DOMParser = require('xmldom').DOMParser;
     var xmlDoc = new DOMParser().parseFromString(doc, 'text/xml');
+
+    if( xmlDoc.childNodes[2].childNodes[7].attributes[0].nodeValue == 1 ) {
+      if( xmlDoc.childNodes[2].childNodes[7].attributes[1].nodeValue == "W" ) {
+        createMessageAlert("Checkmate!", "White team wins!");
+      }
+      else {
+        createMessageAlert("Checkmate!", "Black team wins!");
+      }
+      return;
+    }
 
     // If the invalidMove flag is set, then create an alert and pass the message
     // to it.
